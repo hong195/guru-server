@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('activate', function () {
+    return view('welcome');
+});
+
+Route::post('verify/{envato_user_id}', function () {
+    return view('welcome');
+});
