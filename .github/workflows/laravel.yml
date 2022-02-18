@@ -35,7 +35,7 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
     - name: Optimize clear
-      run:  php artiasan optimize:clear
+      run:  php artisan optimize:clear
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
         APP_NAME: Guru Team Server
