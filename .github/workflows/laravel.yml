@@ -60,7 +60,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: "ls -l"
+          script: "php8 -v"
 
 
 
