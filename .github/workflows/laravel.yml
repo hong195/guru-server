@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  laravel-tests:
+  run-tests:
 
     runs-on: ubuntu-latest
 
@@ -19,8 +19,8 @@ jobs:
           MYSQL_DATABASE: root
         ports:
           - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s 
-        
+        options: --health-cmd="mysqladmin ping" --health-interval=10s
+
     steps:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
@@ -45,12 +45,13 @@ jobs:
         DB_DATABASE: test
         DB_USERNAME: root
         DB_PASSWORD: password
-        
       run: vendor/bin/phpunit
-  deploy:
+
+  production-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: git fetch"
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -61,5 +62,5 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: "ls -l"
 
-    
-      
+
+
