@@ -60,7 +60,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: "php -v"
+          script: "/opt/php80/bin/php -v"
 
 
 
