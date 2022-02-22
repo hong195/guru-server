@@ -10,7 +10,6 @@ php='/opt/php80/bin/php'
 #php='php'
 # Enter maintenance mode or return true
 # if already is in maintenance mode
-$php -v
 ($php artisan down) || true
 
 
