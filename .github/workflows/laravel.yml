@@ -51,14 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: "git fetch"
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
-          #key: ${{ secrets.SSHKEY }}
           password: ${{ secrets.PASSWORD }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: "cd ~/var/www/analythicsthemes.com/data/www/analythicsthemes.com && ./scripts/deploy.sh"
