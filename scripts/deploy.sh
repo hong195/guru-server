@@ -13,7 +13,7 @@ php='/opt/php80/bin/php'
 ($php artisan down) || true
 
 # Pull the latest version of the app
-git pull origin master
+git reset --hard origin/master
 
 #update .env production values
 mv .env.production .env
