@@ -3,6 +3,8 @@ set -e
 
 echo "Deployment started ..."
 
+git remote set-url git@github.com:hong195/guru-server.git
+
 . ~/.nvm/nvm.sh
 #php='/opt/php80/bin/php'
 php='php'

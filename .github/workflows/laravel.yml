@@ -59,9 +59,7 @@ jobs:
           port: ${{ secrets.PORT }}
           password: ${{ secrets.PASSWORD }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: "
-            git remote set-url git@github.com:hong195/guru-server.git &&
-            cd /var/www/analythicsthemes.com/data/www/analythicsthemes.com && /bin/bash ./scripts/deploy.sh"
+          script: "cd /var/www/analythicsthemes.com/data/www/analythicsthemes.com && /bin/bash ./scripts/deploy.sh"
 
 
 
