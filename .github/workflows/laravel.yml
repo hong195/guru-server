@@ -50,7 +50,6 @@ jobs:
   production-deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: git push origin new-branch
       - uses: actions/checkout@v2
       - name: Deploy to server
         uses: appleboy/ssh-action@master
