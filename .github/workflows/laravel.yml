@@ -58,10 +58,10 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSHKEY }}
-          #password: ${{ secrets.PASSWORD }}
+          #key: ${{ secrets.SSHKEY }}
+          password: ${{ secrets.PASSWORD }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: "ls -l && cd ~/var/www/analythicsthemes.com/data/www/analythicsthemes.com && ./scripts/deploy.sh"
+          script: "cd ~/var/www/analythicsthemes.com/data/www/analythicsthemes.com && ./scripts/deploy.sh"
 
 
 
