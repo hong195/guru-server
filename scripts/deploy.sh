@@ -12,10 +12,11 @@ php='/opt/php80/bin/php'
 # if already is in maintenance mode
 ($php artisan down) || true
 
-mv .env.production .env
-
 # Pull the latest version of the app
 git fetch && git pull origin master
+
+#update .env production values
+mv .env.production .env
 
 # Install composer dependencies
 $php ./composer.phar install --no-dev --no-interaction --prefer-dist --optimize-autoloader
