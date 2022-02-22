@@ -3,11 +3,11 @@ set -e
 
 echo "Deployment started ..."
 
-git remote set-url git@github.com:hong195/guru-server.git
+git remote set-url origin git@github.com:hong195/guru-server.git
 
 . ~/.nvm/nvm.sh
-#php='/opt/php80/bin/php'
-php='php'
+php='/opt/php80/bin/php'
+#php='php'
 # Enter maintenance mode or return true
 # if already is in maintenance mode
 $php -v
@@ -15,7 +15,7 @@ $php -v
 
 
 # Pull the latest version of the app
-git pull origin master
+git fetch && git pull origin master
 
 # Install composer dependencies
 $php ./composer.phar install --no-dev --no-interaction --prefer-dist --optimize-autoloader
