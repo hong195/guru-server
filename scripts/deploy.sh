@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-$HOME./.nvm/nvm.sh; nmv use
 echo "Deployment started ..."
 
-php='/opt/php80/bin/php'
-#php='php'
+. ~/.nvm/nvm.sh
+#php='/opt/php80/bin/php'
+php='php'
 # Enter maintenance mode or return true
 # if already is in maintenance mode
 $php -v
@@ -13,7 +13,7 @@ $php -v
 
 
 # Pull the latest version of the app
-git pull origin dev
+git pull origin master
 
 # Install composer dependencies
 $php ./composer.phar install --no-dev --no-interaction --prefer-dist --optimize-autoloader
@@ -25,8 +25,6 @@ $php artisan clear-compiled
 $php artisan optimize
 
 # Compile npm assets
-
-$HOME./.nvm/nvm.sh; nmv use
 nvm use 12
 
 npm install && npm run prod
@@ -37,4 +35,4 @@ $php artisan migrate --force
 # Exit maintenance mode
 $php artisan up
 
-#echo "Deployment finished!"
+echo "Deployment finished!"
