@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivationPluginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,10 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('activate', function () {
-    return view('welcome');
-});
+Route::get('activate', [ActivationPluginController::class, 'activate']);
 
-Route::post('verify/{envato_user_id}', function () {
+Route::get('verify/{envato_user_id}', function () {
     return view('welcome');
 });
