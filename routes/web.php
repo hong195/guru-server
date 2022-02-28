@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivationPluginController;
+use App\Http\Controllers\OAuthController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -18,6 +19,8 @@ use Laravel\Socialite\Facades\Socialite;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name(' ');
 
 Route::get('activate', [ActivationPluginController::class, 'activate']);
 

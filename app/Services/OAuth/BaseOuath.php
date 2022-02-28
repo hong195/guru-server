@@ -3,22 +3,11 @@
 namespace App\Services\OAuth;
 
 use App\Services\Interfaces\OAuthInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Laravel\Socialite\Facades\Socialite;
 
-class EnvatoOuath implements OAuthInterface
+abstract class BaseOuath implements OAuthInterface
 {
-    private \Laravel\Socialite\Contracts\Provider $socialiteDriver;
-
-    public function __construct()
-    {
-        $this->socialiteDriver = Socialite::driver('envato');
-    }
-
-    #[NoReturn] public function handle(): void
-    {
-        dd($this->getUser());
-    }
+    public function __construct(private \Laravel\Socialite\Contracts\Provider $socialiteDriver){}
 
     public function getAccessToken(): ?string
     {
@@ -33,5 +22,15 @@ class EnvatoOuath implements OAuthInterface
     public function getUser(): \Laravel\Socialite\Contracts\User
     {
         return $this->socialiteDriver->user();
+    }
+
+    public function getSocialDriver(): \Laravel\Socialite\Contracts\Provider
+    {
+        return $this->socialiteDriver;
+    }
+
+    public function redirect(): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
+    {
+        return $this->getSocialDriver()->redirect();
     }
 }
