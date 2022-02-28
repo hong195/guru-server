@@ -3,7 +3,6 @@
 use App\Http\Controllers\ActivationPluginController;
 use App\Http\Controllers\OAuthController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
