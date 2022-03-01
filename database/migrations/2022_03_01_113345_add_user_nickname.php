@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('nickname')->after('name')->nullable();
+            $table->string('access_token')->nullable()->change();
+            $table->string('refresh_token')->nullable()->change();
             $table->string('password')->nullable()->change();
         });
     }
@@ -29,6 +31,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('nickname');
             $table->string('password')->nullable(false)->change();
+            $table->string('access_token')->nullable(false)->change();
+            $table->string('refresh_token')->nullable(false)->change();
         });
     }
 };
