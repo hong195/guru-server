@@ -25,7 +25,7 @@ class EnvatoPluginActivation implements PluginActivationInterface
             ->save();
 
         $userPurchasedItems = Http::withToken($user->token)
-            ->post($this->getUserPurchaseListApiUrl())
+            ->get($this->getUserPurchaseListApiUrl())
             ->json();
 
         dd($userPurchasedItems);
