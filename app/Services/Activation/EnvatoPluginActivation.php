@@ -22,6 +22,7 @@ class EnvatoPluginActivation implements PluginActivationInterface
             'password' => bcrypt(123)
         ]);
 
+        dd($this->getUserPurchaseListApiUrl());
         $userPurchasedItems = Http::withToken($user->access_token)
                 ->post($this->getUserPurchaseListApiUrl())
                 ->json();
@@ -34,6 +35,6 @@ class EnvatoPluginActivation implements PluginActivationInterface
 
     protected function getUserPurchaseListApiUrl(): string
     {
-        return config('envato.envato_api_url') . 'market/buyer/list-purchases';
+        return config('services.envato.api_url') . 'market/buyer/list-purchases';
     }
 }
