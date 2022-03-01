@@ -13,19 +13,20 @@ class EnvatoPluginActivation implements PluginActivationInterface
     {
         $user = $auth->getUser();
 
-        $user = User::firstOrCreate([
-            'email' => $user->email,
+        User::firstOrCreate([
             'name' => $user->name,
-            'nickname' => $user->nickname,
-            'access_token' => $user->token,
-            'refresh_token' => $user->refreshToken,
-            'password' => bcrypt(123)
-        ]);
+        ])
+            ->fill([
+                'nickname' => $user->nickname,
+                'access_token' => $user->token,
+                'refresh_token' => $user->refreshToken,
+                'password' => bcrypt(123)
+            ])
+            ->save();
 
-        dd($this->getUserPurchaseListApiUrl());
         $userPurchasedItems = Http::withToken($user->access_token)
-                ->post($this->getUserPurchaseListApiUrl())
-                ->json();
+            ->post($this->getUserPurchaseListApiUrl())
+            ->json();
 
         dd($userPurchasedItems);
 
