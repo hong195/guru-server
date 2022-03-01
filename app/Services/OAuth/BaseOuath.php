@@ -33,4 +33,12 @@ abstract class BaseOuath implements OAuthInterface
     {
         return $this->getSocialDriver()->redirect();
     }
+
+    /**
+     * @return \Laravel\Socialite\Contracts\Provider
+     */
+    public function getSocialiteDriver(): \Laravel\Socialite\Contracts\Provider
+    {
+        return $this->socialiteDriver;
+    }
 }

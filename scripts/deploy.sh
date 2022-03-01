@@ -3,7 +3,7 @@ set -e
 
 echo "Deployment started ..."
 
-git remote set-url origin https://github.com/hong195/guru-server.git
+git remote set-url origin git@github.com:hong195/guru-server.git
 
 . ~/.nvm/nvm.sh
 php='/opt/php80/bin/php'
