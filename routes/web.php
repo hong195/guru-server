@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name(' ');
+Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/redirect');
 
 Route::get('activate', [ActivationPluginController::class, 'activate']);
 

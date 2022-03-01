@@ -33,6 +33,9 @@ return [
     'envato' => [
         'client_id' => env('ENVATO_CLIENT_ID'),
         'client_secret' => env('ENVATO_CLIENT_SECRET'),
-        'redirect' => env('ENVATO_REDIRECT_URI')
+        'redirect' => env('ENVATO_REDIRECT_URI'),
+        'base_api_url' => env('ENVATO_BASE_API_URL'),
+        'api_version' => env('ENVATO_API_VERSION'),
+        'api_url' => env('ENVATO_API_URL'),
     ],
 ];
