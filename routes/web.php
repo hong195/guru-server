@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivationPluginController;
+use App\Http\Controllers\DomainRegistrationController;
 use App\Http\Controllers\OAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,11 @@ Route::get('/', function () {
 
 Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/redirect');
 
-Route::get('activate', [ActivationPluginController::class, 'activate']);
 
-Route::get('verify/{envato_user_id}', function () {
-    return view('welcome');
+Route::prefix('domain')->group(function() {
+    Route::get('/register', [DomainRegistrationController::class, 'createRequest'])->name('domain/register');
+    Route::get('/activate', [DomainRegistrationController::class, 'approve']);
+    Route::get('/check/{domain}', function () {
+        return view('welcome');
+    });
 });
