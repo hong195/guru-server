@@ -11,7 +11,7 @@ abstract class BaseOuath implements OAuthInterface
 
     public function getAccessToken()
     {
-        return $this->getUser()->accessTokenResponseBody;
+        return $this->getUser()->token;
     }
 
     public function getRefreshToken()
