@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'envato' => [
+        'client_id' => env('ENVATO_CLIENT_ID'),
+        'client_secret' => env('ENVATO_CLIENT_SECRET'),
+        'redirect' => env('ENVATO_REDIRECT_URI')
+    ],
 ];
