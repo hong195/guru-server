@@ -9,7 +9,7 @@ class EnvatoPluginActivation implements PluginActivationInterface
 {
     public function activate(OAuthInterface $auth)
     {
-        dd($auth->getUser(), $auth->getAccessToken());
+        dd($auth->getUser(), $auth->getAccessToken(), $auth->getRefreshToken());
         ///handle
         /// create record of user
     }
