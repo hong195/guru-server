@@ -36,6 +36,6 @@ class EnvatoPluginActivation implements PluginActivationInterface
 
     protected function getUserPurchaseListApiUrl(): string
     {
-        return config('services.envato.api_url') . 'market/buyer/list-purchases';
+        return config('services.envato.api_url') . '/market/buyer/list-purchases';
     }
 }
