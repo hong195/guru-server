@@ -6,9 +6,9 @@ interface OAuthInterface
 {
     public function getUser();
 
-    public function getAccessToken() : ?string;
+    public function getAccessToken();
 
-    public function getRefreshToken() : ?string;
+    public function getRefreshToken();
 
     public function redirect();
 }

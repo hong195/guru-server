@@ -9,12 +9,12 @@ abstract class BaseOuath implements OAuthInterface
 {
     public function __construct(private \Laravel\Socialite\Contracts\Provider $socialiteDriver){}
 
-    public function getAccessToken(): ?string
+    public function getAccessToken()
     {
         return $this->getUser()->accessTokenResponseBody;
     }
 
-    public function getRefreshToken(): ?string
+    public function getRefreshToken()
     {
         return $this->getUser()->refreshToken;
     }
