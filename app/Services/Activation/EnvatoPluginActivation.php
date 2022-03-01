@@ -14,11 +14,11 @@ class EnvatoPluginActivation implements PluginActivationInterface
         $user = $auth->getUser();
 
         $user = User::firstOrCreate([
-            'email' => $user['email'],
-            'name' => $user['name'],
-            'nickname' => $user['nickname'],
-            'access_token' => $user['token'],
-            'refresh_token' => $user['refreshToken'],
+            'email' => $user->email,
+            'name' => $user->name,
+            'nickname' => $user->nickname,
+            'access_token' => $user->token,
+            'refresh_token' => $user->refreshToken,
             'password' => bcrypt(123)
         ]);
 
