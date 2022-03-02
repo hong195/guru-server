@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DomainApplication extends Model
+class Domain extends Model
 {
     use HasFactory;
 
@@ -20,6 +20,11 @@ class DomainApplication extends Model
 
     public function approve(string $code)
     {
-        $application = $this->where('code', $code)->findOrFail();
+        $domain = $this->where('code', $code)->findOrFail();
+    }
+
+    public function deregister()
+    {
+
     }
 }
