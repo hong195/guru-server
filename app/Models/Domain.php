@@ -9,22 +9,30 @@ class Domain extends Model
 {
     use HasFactory;
 
-    public function createRequest(string $domain, string $code)
+    protected $guarded = [];
+
+    public function product(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        (new self([
-            'domain' => $domain,
-            'status' => 'pending',
-            'code' => $code
-        ]))->save();
+        return $this->HasOne(Product::class);
     }
 
-    public function approve(string $code)
+    public static function request(string $url, int $productId) : void
     {
-        $domain = $this->where('code', $code)->findOrFail();
+        self::create([
+            'url' => $url,
+            'product_id' => $productId,
+            'status' => 'unregistered',
+        ]);
     }
 
-    public function deregister()
+    public function register() : void
     {
+        $this->status = 'registered';
+        $this->save();
+    }
 
+    public function deregister() : void
+    {
+        self::delete();
     }
 }

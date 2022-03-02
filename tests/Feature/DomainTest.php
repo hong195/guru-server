@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Domain;
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class DomainTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *
@@ -15,22 +17,28 @@ class DomainTest extends TestCase
      */
     public function test_domain_can_be_requested()
     {
-        $response = $this->get('/');
+        $product = Product::factory()->create();
 
-        $response->assertStatus(200);
+        Domain::request('test.com', $product->id);
+
+        $this->assertDatabaseHas('domains', [
+            'url' => 'test.com',
+            'product_id' => $product->id
+        ]);
     }
 
     public function test_domain_can_be_registered()
     {
-        $response = $this->get('/');
+        $domain = Domain::factory()->create();
+        $domain->register();
 
-        $response->assertStatus(200);
+        $this->assertEquals('registered', $domain->status);
     }
 
     public function test_domain_can_be_de_registered()
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        $domain = Domain::factory()->create();
+        $domain->deregister();
+        $this->assertDatabaseMissing('domains', $domain->toArray());
     }
 }
