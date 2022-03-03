@@ -34,11 +34,4 @@ class DomainTest extends TestCase
 
         $this->assertEquals('registered', $domain->status);
     }
-
-    public function test_domain_can_be_de_registered()
-    {
-        $domain = Domain::factory()->create();
-        $domain->deregister();
-        $this->assertDatabaseMissing('domains', $domain->toArray());
-    }
 }

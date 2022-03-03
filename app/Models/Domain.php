@@ -9,6 +9,9 @@ class Domain extends Model
 {
     use HasFactory;
 
+    const REGISTERED_STATUS = 'registered';
+    const UN_REGISTERED_STATUS = 'unregistered';
+
     protected $guarded = [];
 
     public function product(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -28,11 +31,20 @@ class Domain extends Model
     public function register() : void
     {
         $this->status = 'registered';
-        $this->save();
     }
 
-    public function deregister() : void
+    public function isRegistered(): bool
     {
-        self::delete();
+        return $this->status === self::REGISTERED_STATUS;
+    }
+
+    public function isNotRegistered(): bool
+    {
+        return $this->status === self::UN_REGISTERED_STATUS;
+    }
+
+    public function setCode(string $code)
+    {
+        $this->code = $code;
     }
 }

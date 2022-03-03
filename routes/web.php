@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivationPluginController;
-use App\Http\Controllers\DomainRegistrationController;
+use App\Http\Controllers\DomainController;
 use App\Http\Controllers\OAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +24,9 @@ Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/re
 
 
 Route::prefix('domain')->group(function() {
-    Route::get('/request/{domain}/{product}', [DomainRegistrationController::class, 'createRequest'])->name('domain/register');
-    Route::get('/register', [DomainRegistrationController::class, 'register'])->name('domain/register');
-    Route::get('/deregister', [DomainRegistrationController::class, 'deregister'])->name('domain/deregister');
+    Route::get('/request/{domain}/{product}', [DomainController::class, 'createRequest'])->name('domain/register');
+    Route::get('/register', [DomainController::class, 'register'])->name('domain/register');
+    Route::get('/deregister/{domain}/{product}', [DomainController::class, 'deregister'])->name('domain/deregister');
     Route::get('/check/{domain}', function () {
         return view('welcome');
     })
