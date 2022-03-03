@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use App\DTO\DomainDTO;
+use App\Models\Domain;
 use Illuminate\Foundation\Http\FormRequest;
-use JetBrains\PhpStorm\Pure;
+use JetBrains\PhpStorm\ArrayShape;
 
 class DomainRequest extends FormRequest
 {
@@ -13,9 +14,9 @@ class DomainRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,19 +24,19 @@ class DomainRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    #[ArrayShape(['domain' => "string[]"])] public function rules(): array
     {
         return [
-            'url' => ['required', 'string'],
-            'productID' => ['required', 'exists:App\Models\Product,id'],
+            'domain' => ['required', 'string'],
+            //'productID' => ['required', 'exists:App\Models\Product,id'],
         ];
     }
 
     public function getDTO(): DomainDTO
     {
         return new DomainDTO(
-            $this->get('url'),
-            $this->get('productID'),
+            $this->get('domain'),
+            Domain::PRODUCT_ID,
         );
     }
 }

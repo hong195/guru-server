@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 
 class DomainController extends Controller
 {
-    public function __construct(private DomainService $domainService){}
+    public function __construct(private DomainService $domainService){
+    }
 
     public function request(DomainRequest $request)
     {

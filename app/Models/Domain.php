@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Domain extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
     const REGISTERED_STATUS = 'registered';
     const UN_REGISTERED_STATUS = 'unregistered';
+    const PRODUCT_ID = 31778602;
 
     protected $guarded = [];
 

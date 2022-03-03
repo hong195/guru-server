@@ -2,44 +2,37 @@
 
 namespace App\Services\Domain;
 
-use App\Exceptions\ExistingDomainException;
+use App\Exceptions\DomainIsAlreadyRequested;
 use App\Exceptions\NotPurchasedProductException;
 use App\Http\Requests\DomainRequest;
 use App\Models\Domain;
 use App\Models\User;
 use App\Services\Envato\EnvatoMarketAPI;
-use App\Services\OAuth\EnvatoOAuth;
+use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DomainService
 {
-    public function __construct(private EnvatoMarketAPI $marketAPI, private EnvatoOAuth $OAuth)
+    public function __construct(private EnvatoMarketAPI $marketAPI, private OAuthInterface $OAuth)
     {
     }
 
     /**
-     * @throws ExistingDomainException
+     * @throws DomainIsAlreadyRequested
      */
     public function request(DomainRequest $request)
     {
         $dto = $request->getDTO();
-
         /** @var Domain $domain */
-        $domain = Domain::where('product_id', $dto->getProductID())
-            ->andWhere('url', $dto->getUrl())
-            ->first();
+        $domainIsAlreadyRequested = Domain::where('url', $dto->getUrl())->first();
 
-        $isDomainAlreadyExists = $domain->exists();
-
-        if ($domain->isRegistered()) {
-            //TODO tell user that he has been already registered product
-        }
-
-        if ($isDomainAlreadyExists) {
-            throw new ExistingDomainException();
+        if ($domainIsAlreadyRequested) {
+            throw new DomainIsAlreadyRequested();
         }
 
         Domain::request($dto->getUrl(), $dto->getProductID());
+
+        return $this->OAuth->redirect();
     }
 
     /**
@@ -51,9 +44,7 @@ class DomainService
         $dto = $request->getDTO();
 
         /** @var Domain $domain */
-        $domain = Domain::where('product_id', $dto->getProductID())
-            ->andWhere('url', $dto->getUrl())
-            ->findOrFail();
+        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
 
         $user = $this->OAuth->getUser();
 
@@ -69,20 +60,19 @@ class DomainService
             ])
             ->save();
 
-        $purchasedProduct = $this->marketAPI->getBuyerPurchases($user->token)
+        $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($user->token)
             ->filter(function ($purchase) use ($domain) {
-                return $purchase['item']['id'] === $domain->product_id;
+                return $purchase['item']['id'] === Domain::PRODUCT_ID;
             })
             ->first();
 
-        if (!$purchasedProduct) {
+        if (!$hasPurchasedProduct) {
             throw new NotPurchasedProductException;
         }
 
-        $domain->setCode($purchasedProduct['code']);
+        $domain->setCode($hasPurchasedProduct['code']);
         $domain->register();
         $domain->save();
-
         ///fire events after completion
     }
 
@@ -93,9 +83,7 @@ class DomainService
     {
         $dto = $request->getDTO();
 
-        $domain = Domain::where('product_id', $dto->getProductID())
-            ->andWhere('url', $dto->getUrl())
-            ->firstOrFail();
+        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
 
         $domain->remove();
     }

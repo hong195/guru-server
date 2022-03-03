@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(PluginActivationInterface::class, function() {
-            return new EnvatoPluginActivation($this->app->make(OAuthInterface::class));
+            return new EnvatoPluginActivation();
         });
     }
 

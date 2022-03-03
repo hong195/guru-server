@@ -24,9 +24,9 @@ Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/re
 
 
 Route::prefix('domain')->group(function() {
-    Route::get('/request/{domain}/{product}', [DomainController::class, 'createRequest'])->name('domain/register');
+    Route::get('/request/{domain}', [DomainController::class, 'createRequest'])->name('domain/register');
     Route::get('/register', [DomainController::class, 'register'])->name('domain/register');
-    Route::get('/deregister/{domain}/{product}', [DomainController::class, 'deregister'])->name('domain/deregister');
+    Route::get('/deregister/{domain}', [DomainController::class, 'deregister'])->name('domain/deregister');
     Route::get('/check/{domain}', function () {
         return view('welcome');
     })
