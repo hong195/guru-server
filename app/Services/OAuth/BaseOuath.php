@@ -9,12 +9,12 @@ abstract class BaseOuath implements OAuthInterface
 {
     public function __construct(private \Laravel\Socialite\Contracts\Provider $socialiteDriver){}
 
-    public function getAccessToken(): ?string
+    public function getAccessToken()
     {
-        return $this->getUser()->accessTokenResponseBody;
+        return $this->getUser()->token;
     }
 
-    public function getRefreshToken(): ?string
+    public function getRefreshToken()
     {
         return $this->getUser()->refreshToken;
     }
@@ -32,5 +32,13 @@ abstract class BaseOuath implements OAuthInterface
     public function redirect(): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
     {
         return $this->getSocialDriver()->redirect();
+    }
+
+    /**
+     * @return \Laravel\Socialite\Contracts\Provider
+     */
+    public function getSocialiteDriver(): \Laravel\Socialite\Contracts\Provider
+    {
+        return $this->socialiteDriver;
     }
 }

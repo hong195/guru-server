@@ -7,14 +7,14 @@
     "require": {
         "php": "^8.0",
         "backpack/crud": "^5.0",
+        "backpack/permissionmanager": "^6.0",
         "fruitcake/laravel-cors": "^2.0.5",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "laravel/socialite": "^5.5",
         "laravel/tinker": "^2.7",
-        "socialiteproviders/envato": "^4.1",
-        "socialiteproviders/zoho": "^4.1"
+        "socialiteproviders/envato": "^4.1"
     },
     "require-dev": {
         "backpack/generators": "^3.1",
