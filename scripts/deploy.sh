@@ -28,9 +28,9 @@ $php artisan clear-compiled
 $php artisan optimize
 
 # Compile npm assets
-#nvm use 12
+nvm use 12
 #
-#npm install && npm run prod
+npm install && npm run prod
 
 # Run database migrations
 $php artisan migrate --force
