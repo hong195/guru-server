@@ -23,11 +23,11 @@ Route::get('/', function () {
 Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/redirect');
 
 
-Route::prefix('domain')->group(function() {
-    Route::get('/request/{domain}', [DomainController::class, 'createRequest'])->name('domain/register');
-    Route::get('/register', [DomainController::class, 'register'])->name('domain/register');
-    Route::get('/deregister/{domain}', [DomainController::class, 'deregister'])->name('domain/deregister');
-    Route::get('/check/{domain}', function () {
+Route::prefix('domain')->middleware('throttle:30,1')->group(function() {
+    Route::get('request', [DomainController::class, 'request'])->name('domain/register');
+    Route::get('register', [DomainController::class, 'register'])->name('domain/register');
+    Route::get('deregister', [DomainController::class, 'deregister'])->name('domain/deregister');
+    Route::get('check', function () {
         return view('welcome');
     })
         ->name('domain/check');
