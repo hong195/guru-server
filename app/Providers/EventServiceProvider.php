@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\DomainActivated;
+use App\Listeners\SyncEnvatoUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             \SocialiteProviders\Envato\EnvatoExtendSocialite::class.'@handle',
         ],
+        DomainActivated::class => [
+            SyncEnvatoUser::class
+        ]
     ];
 
     /**

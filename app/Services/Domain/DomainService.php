@@ -2,6 +2,7 @@
 
 namespace App\Services\Domain;
 
+use App\Events\DomainActivated;
 use App\Exceptions\DomainIsAlreadyRequested;
 use App\Exceptions\NotPurchasedProductException;
 use App\Http\Requests\DomainRequest;
@@ -26,22 +27,6 @@ class DomainService
     {
         $dto = $request->getDTO();
 
-        $oAuthUser= $this->OAuth->getUser();
-
-        //todo perform user insertion on event
-        $user = User::firstOrNew([
-            'nickname' => $oAuthUser->nickname,
-        ])
-            ->fill([
-                'name' => $oAuthUser->name,
-                'email' => $oAuthUser->email,
-                'access_token' => $oAuthUser->token,
-                'refresh_token' => $oAuthUser->refreshToken,
-            ]);
-
-        $user->password = bcrypt(123);
-        $user->save();
-
         $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($this->OAuth->getAccessToken())
             ->filter(function ($purchase) {
                 return $purchase['item']['id'] === Domain::PRODUCT_ID;
@@ -63,8 +48,7 @@ class DomainService
         $domain->setCode($hasPurchasedProduct['code']);
         $domain->save();
 
-        dispatch();
-        ///fire events after completion
+        DomainActivated::dispatch($this->OAuth->getUser());
     }
 
     /**
