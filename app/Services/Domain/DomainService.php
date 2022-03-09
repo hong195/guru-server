@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Envato\EnvatoMarketAPI;
 use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class DomainService
 {
@@ -39,8 +40,9 @@ class DomainService
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
      */
-    public function register(DomainRequest $request)
+    public function activate(Request $request)
     {
+        dd($request);
         $dto = $request->getDTO();
 
         /** @var Domain $domain */
@@ -79,7 +81,7 @@ class DomainService
     /**
      * @throws ModelNotFoundException
      */
-    public function deRegister(DomainRequest $request)
+    public function deActivate(DomainRequest $request)
     {
         $dto = $request->getDTO();
 

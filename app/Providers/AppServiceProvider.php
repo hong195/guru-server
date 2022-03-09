@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(OAuthInterface::class, function() {
-            return new EnvatoOAuth(Socialite::driver('envato')->stateless());
+            return new EnvatoOAuth(Socialite::driver('envato'));
         });
 
         $this->app->bind(PluginActivationInterface::class, function() {

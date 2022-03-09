@@ -13,4 +13,13 @@ class EnvatoOAuth extends BaseOuath
     {
         parent::__construct($provider);
     }
+
+    public function redirect(): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
+    {
+        return $this->getSocialDriver()
+            ->with([
+                'state' => request('domain')
+            ])
+            ->redirect();
+    }
 }

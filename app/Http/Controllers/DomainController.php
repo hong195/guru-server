@@ -14,15 +14,13 @@ class DomainController extends Controller
     public function request(DomainRequest $request)
     {
         try {
-            $this->domainService->request($request);
-
-            return 'success';
+            return $this->domainService->request($request);
         }catch (\Exception $e) {
             throw $e;
         }
     }
 
-    public function register(DomainRequest $request)
+    public function activate(DomainRequest $request)
     {
         try {
             $this->domainService->register($request);
@@ -32,8 +30,7 @@ class DomainController extends Controller
         }
     }
 
-
-    public function deregister(Request $request)
+    public function deActivate(Request $request)
     {
         try {
             $this->domainService->register($request);
