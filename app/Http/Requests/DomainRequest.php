@@ -35,7 +35,7 @@ class DomainRequest extends FormRequest
     public function getDTO(): DomainDTO
     {
         return new DomainDTO(
-            $this->get('domain'),
+            $this->get('state'),
             Domain::PRODUCT_ID,
         );
     }

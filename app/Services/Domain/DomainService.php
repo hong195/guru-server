@@ -31,9 +31,6 @@ class DomainService
             'status' => 'unactivated',
         ]);
 
-        $domain->activate();
-        $domain->save();
-
         $user = $this->OAuth->getUser();
 
         //todo perform user insertion on event
@@ -58,8 +55,8 @@ class DomainService
             throw new NotPurchasedProductException;
         }
 
+        $domain->activate();
         $domain->setCode($hasPurchasedProduct['code']);
-        $domain->register();
         $domain->save();
         ///fire events after completion
     }
