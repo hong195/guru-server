@@ -24,10 +24,10 @@ class DomainRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['domain' => "string[]"])] public function rules(): array
+    #[ArrayShape(['state' => "string[]"])] public function rules(): array
     {
         return [
-            'domain' => ['required', 'string'],
+            'state' => ['required', 'string'],
             //'productID' => ['required', 'exists:App\Models\Product,id'],
         ];
     }

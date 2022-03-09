@@ -17,36 +17,22 @@ class DomainService
     public function __construct(private EnvatoMarketAPI $marketAPI, private OAuthInterface $OAuth)
     {
     }
-
-    /**
-     * @throws DomainIsAlreadyRequested
-     */
-    public function request(DomainRequest $request)
-    {
-        $dto = $request->getDTO();
-        /** @var Domain $domain */
-        $domainIsAlreadyRequested = Domain::where('url', $dto->getUrl())->first();
-
-        if ($domainIsAlreadyRequested) {
-            throw new DomainIsAlreadyRequested();
-        }
-
-        Domain::request($dto->getUrl(), $dto->getProductID());
-
-        return $this->OAuth->redirect();
-    }
-
     /**
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
      */
-    public function activate(Request $request)
+    public function activate(DomainRequest $request)
     {
-        dd($request);
         $dto = $request->getDTO();
-
         /** @var Domain $domain */
-        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
+        $domain = Domain::create([
+            'url' => $dto->getUrl(),
+            'product_id' => $dto->getProductID(),
+            'status' => 'unactivated',
+        ]);
+
+        $domain->activate();
+        $domain->save();
 
         $user = $this->OAuth->getUser();
 

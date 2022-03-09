@@ -10,8 +10,8 @@ class Domain extends Model
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
-    const REGISTERED_STATUS = 'registered';
-    const UN_REGISTERED_STATUS = 'unregistered';
+    const ACTIVATED_STATUS = 'activated';
+    const NOT_ACTIVATED_STATUS = 'unactivated';
     const PRODUCT_ID = 31778602;
 
     protected $guarded = [];
@@ -30,19 +30,19 @@ class Domain extends Model
         ]);
     }
 
-    public function register() : void
+    public function activate() : void
     {
         $this->status = 'registered';
     }
 
-    public function isRegistered(): bool
+    public function isActivated(): bool
     {
-        return $this->status === self::REGISTERED_STATUS;
+        return $this->status === self::ACTIVATED_STATUS;
     }
 
-    public function isNotRegistered(): bool
+    public function isNotActivated(): bool
     {
-        return $this->status === self::UN_REGISTERED_STATUS;
+        return $this->status === self::NOT_ACTIVATED_STATUS;
     }
 
     public function setCode(string $code)

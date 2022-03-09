@@ -24,7 +24,6 @@ Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/re
 
 
 Route::prefix('domain')->middleware('throttle:30,1')->group(function() {
-    //Route::get('request', [DomainController::class, 'request'])->name('domain/request');
     Route::get('activate', [DomainController::class, 'activate'])->name('domain/activate');
     Route::get('de-activate', [DomainController::class, 'de-activate'])->name('domain/de-activate');
     Route::get('check', function () {
