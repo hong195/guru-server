@@ -17,6 +17,7 @@ class DomainService
     public function __construct(private EnvatoMarketAPI $marketAPI, private OAuthInterface $OAuth)
     {
     }
+
     /**
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
@@ -25,22 +26,24 @@ class DomainService
     {
         $dto = $request->getDTO();
 
-        $user = $this->OAuth->getUser();
+        $oAuthUser= $this->OAuth->getUser();
 
         //todo perform user insertion on event
-        User::firstOrCreate([
-            'name' => $user->name,
+        $user = User::firstOrNew([
+            'nickname' => $oAuthUser->nickname,
         ])
             ->fill([
-                'nickname' => $user->nickname,
-                'access_token' => $user->token,
-                'refresh_token' => $user->refreshToken,
-                'password' => bcrypt(123)
-            ])
-            ->save();
+                'name' => $oAuthUser->name,
+                'email' => $oAuthUser->email,
+                'access_token' => $oAuthUser->token,
+                'refresh_token' => $oAuthUser->refreshToken,
+            ]);
 
-        $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($user->token)
-            ->filter(function ($purchase)  {
+        $user->password = bcrypt(123);
+        $user->save();
+
+        $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($this->OAuth->getAccessToken())
+            ->filter(function ($purchase) {
                 return $purchase['item']['id'] === Domain::PRODUCT_ID;
             })
             ->first();
@@ -59,6 +62,8 @@ class DomainService
         $domain->activate();
         $domain->setCode($hasPurchasedProduct['code']);
         $domain->save();
+
+        dispatch();
         ///fire events after completion
     }
 

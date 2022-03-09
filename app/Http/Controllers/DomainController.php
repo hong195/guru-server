@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotPurchasedProductException;
 use App\Http\Requests\DomainRequest;
 use App\Services\Domain\DomainService;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class DomainController extends Controller
         try {
             $this->domainService->activate($request);
             $title = 'Plugin was successfully connected to ' . $request->getDTO()->getUrl() . ' domain';
-        }catch (\Exception $e) {
+        }catch (NotPurchasedProductException $e) {
             $title = 'Activation error, please try later';
         }
 
@@ -35,7 +36,7 @@ class DomainController extends Controller
         try {
             $this->domainService->deActivate($request);
             $title = 'Plugin was successfully disconnected from ' . $request->getDTO()->getUrl() .' domain';
-        }catch (\Exception $e) {
+        }catch (NotPurchasedProductException $e) {
             $title = 'Error occurred, please try later';
         }
 
