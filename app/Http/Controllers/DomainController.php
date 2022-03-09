@@ -17,13 +17,13 @@ class DomainController extends Controller
 
         try {
             $this->domainService->activate($request);
-            $title = 'Plugin was successfully activated';
+            $title = 'Plugin was successfully connected to ' . $request->getDTO()->getUrl() . ' domain';
         }catch (\Exception $e) {
             $title = 'Activation error, please try later';
         }
 
         return view('activation-success', [
-            'description' => '<a href='. $goBackUrl .'>Go back to the amdin panel</a>',
+            'description' => '<a href='. $goBackUrl .'>Go back to my amdin panel</a>',
             'title' => $title
         ]);
     }
@@ -34,13 +34,13 @@ class DomainController extends Controller
 
         try {
             $this->domainService->deActivate($request);
-            $title = 'Plugin was successfully disconnected to ' . $request->getDTO()->getUrl() .' domain';
+            $title = 'Plugin was successfully disconnected from ' . $request->getDTO()->getUrl() .' domain';
         }catch (\Exception $e) {
             $title = 'Error occurred, please try later';
         }
 
         return view('activation-success', [
-            'description' => '<a href='. $goBackUrl .'>Go back to the amdin panel</a>',
+            'description' => '<a href='. $goBackUrl .'>Go back to my amdin panel</a>',
             'title' => $title
         ]);
     }

@@ -1,4 +1,4 @@
-@extends(backpack_user() && (Str::startsWit4h(\Request::path(), config('backpack.base.route_prefix'))) ? 'backpack::layouts.top_left' : 'backpack::layouts.plain')
+@extends('backpack::layouts.plain')
 
 @section('after_styles')
     <style>
