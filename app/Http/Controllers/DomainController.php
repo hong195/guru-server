@@ -11,32 +11,37 @@ class DomainController extends Controller
     public function __construct(private DomainService $domainService){
     }
 
-    public function request(DomainRequest $request)
+    public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|string|\Illuminate\Contracts\Foundation\Application
     {
-        try {
-            return $this->domainService->request($request);
-        }catch (\Exception $e) {
-            throw $e;
-        }
-    }
+        $goBackUrl = $request->getDTO()->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
 
-    public function activate(DomainRequest $request)
-    {
         try {
             $this->domainService->activate($request);
-            return 'success';
+            $title = 'Plugin was successfully activated';
         }catch (\Exception $e) {
-            throw $e;
+            $title = 'Activation error, please try later';
         }
+
+        return view('activation-success', [
+            'description' => '<a href='. $goBackUrl .'>Go back to the amdin panel</a>',
+            'title' => $title
+        ]);
     }
 
-    public function deActivate(Request $request)
+    public function deActivate(DomainRequest $request): string
     {
+        $goBackUrl = $request->getDTO()->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
+
         try {
             $this->domainService->deActivate($request);
-            return 'success';
+            $title = 'Plugin was successfully disconnected to ' . $request->getDTO()->getUrl() .' domain';
         }catch (\Exception $e) {
-            throw $e;
+            $title = 'Error occurred, please try later';
         }
+
+        return view('activation-success', [
+            'description' => '<a href='. $goBackUrl .'>Go back to the amdin panel</a>',
+            'title' => $title
+        ]);
     }
 }

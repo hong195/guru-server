@@ -24,12 +24,6 @@ class DomainService
     public function activate(DomainRequest $request)
     {
         $dto = $request->getDTO();
-        /** @var Domain $domain */
-        $domain = Domain::create([
-            'url' => $dto->getUrl(),
-            'product_id' => $dto->getProductID(),
-            'status' => 'unactivated',
-        ]);
 
         $user = $this->OAuth->getUser();
 
@@ -46,14 +40,21 @@ class DomainService
             ->save();
 
         $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($user->token)
-            ->filter(function ($purchase) use ($domain) {
+            ->filter(function ($purchase)  {
                 return $purchase['item']['id'] === Domain::PRODUCT_ID;
             })
             ->first();
 
         if (!$hasPurchasedProduct) {
-            throw new NotPurchasedProductException;
+            throw new NotPurchasedProductException();
         }
+
+        /** @var Domain $domain */
+        $domain = Domain::create([
+            'url' => $dto->getUrl(),
+            'product_id' => $dto->getProductID(),
+            'status' => 'unactivated',
+        ]);
 
         $domain->activate();
         $domain->setCode($hasPurchasedProduct['code']);

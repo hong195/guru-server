@@ -31,3 +31,12 @@ Route::prefix('domain')->middleware('throttle:30,1')->group(function() {
     })
         ->name('domain/check');
 });
+
+
+Route::get('/erererer', function () {
+    $url = 'http://telegram.loc/wp-admin/admin.php?page=bftow_settings';
+    return view('errors.activation', [
+        'description' => '<a href='. $url .'>Go back</a>',
+        'title' => 'Activation Error'
+    ]);
+});
