@@ -36,7 +36,7 @@ class DomainRequest extends FormRequest
     {
         return new DomainDTO(
             $this->get('state'),
-            Domain::PRODUCT_ID,
+            Domain::PRO_PLUGIN_PRODUCT_ID,
         );
     }
 }
