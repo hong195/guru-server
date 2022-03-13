@@ -9,8 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use SocialiteProviders\Manager\OAuth2\User;
 
-class DomainActivated
+class EnvatoUserAuthorized
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,7 +20,10 @@ class DomainActivated
      *
      * @return void
      */
-    public function __construct(public array $userData){}
+    public function __construct(public User $user)
+    {
+        //
+    }
 
     /**
      * Get the channels the event should broadcast on.

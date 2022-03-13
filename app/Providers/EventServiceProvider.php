@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\DomainActivated;
+use App\Events\EnvatoUserAuthorized;
 use App\Listeners\SyncEnvatoUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -23,7 +24,7 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             \SocialiteProviders\Envato\EnvatoExtendSocialite::class.'@handle',
         ],
-        DomainActivated::class => [
+        EnvatoUserAuthorized::class => [
             SyncEnvatoUser::class
         ]
     ];

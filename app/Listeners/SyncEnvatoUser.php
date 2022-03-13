@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\DomainActivated;
+use App\Events\EnvatoUserAuthorized;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,29 +14,26 @@ class SyncEnvatoUser
      *
      * @return void
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(){}
 
     /**
      * Handle the event.
      *
-     * @param  \App\Events\DomainActivated  $event
+     * @param  \App\Events\EnvatoUserAuthorized  $event
      * @return void
      */
-    public function handle(DomainActivated $event)
+    public function handle(EnvatoUserAuthorized $event)
     {
-        $userData = $event->userData;
+        $oAuthUser = $event->user;
 
         $user = User::firstOrNew([
-            'nickname' => $userData->nickname,
+            'nickname' => $oAuthUser->nickname,
         ])
             ->fill([
-                'name' => $userData->name,
-                'email' => $userData->email,
-                'access_token' => $userData->token,
-                'refresh_token' => $userData->refreshToken,
+                'name' => $oAuthUser->name,
+                'email' => $oAuthUser->email,
+                'access_token' => $oAuthUser->token,
+                'refresh_token' => $oAuthUser->refreshToken,
             ]);
 
         $user->password = bcrypt(123);

@@ -2,38 +2,38 @@
 
 namespace App\Services\Domain;
 
-use App\Events\DomainActivated;
-use App\Exceptions\DomainIsAlreadyRequested;
+use App\DTO\DomainDTO;
+use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
-use App\Http\Requests\DomainRequest;
 use App\Models\Domain;
-use App\Models\User;
-use App\Services\Envato\EnvatoMarketAPI;
+use App\Services\Envato\EnvatoBuyerAPI;
 use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 
 class DomainService
 {
-    public function __construct(private EnvatoMarketAPI $marketAPI, private OAuthInterface $OAuth)
+    private EnvatoBuyerAPI $envatoBuyerAPI;
+
+    /**
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function __construct(private OAuthInterface $oAuth)
     {
+        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['token' => $this->oAuth->getAccessToken()]);
     }
 
     /**
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
+     * @throws DomainHasBeenAlreadyActivated
      */
-    public function activate(DomainRequest $request)
+    public function activate(DomainDTO $dto)
     {
-        $dto = $request->getDTO();
+        if (Domain::isActivated($dto->getUrl())->exists()) {
+            throw new DomainHasBeenAlreadyActivated();
+        }
 
-        $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($this->OAuth->getAccessToken())
-            ->filter(function ($purchase) {
-                return $purchase['item']['id'] === Domain::PRODUCT_ID;
-            })
-            ->first();
-
-        if (!$hasPurchasedProduct) {
+        if (!$this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {
             throw new NotPurchasedProductException();
         }
 
@@ -45,20 +45,16 @@ class DomainService
         ]);
 
         $domain->activate();
-        $domain->setCode($hasPurchasedProduct['code']);
+        $domain->setCode($this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID));
         $domain->save();
-
-        DomainActivated::dispatch($this->OAuth->getUser());
     }
 
     /**
      * @throws ModelNotFoundException
      */
-    public function deActivate(DomainRequest $request)
+    public function deActivate(DomainDTO $dto)
     {
-        $dto = $request->getDTO();
-
-        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
+        $domain = Domain::isActivated($dto->getUrl())->firstOrFail();
 
         $domain->remove();
     }

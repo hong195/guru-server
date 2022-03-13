@@ -12,7 +12,7 @@ class Domain extends Model
 
     const ACTIVATED_STATUS = 'activated';
     const NOT_ACTIVATED_STATUS = 'unactivated';
-    const PRODUCT_ID = 31778602;
+    const PRO_PLUGIN_PRODUCT_ID = 31778602;
 
     protected $guarded = [];
 
@@ -21,7 +21,7 @@ class Domain extends Model
         return $this->HasOne(Product::class);
     }
 
-    public static function request(string $url, int $productId) : void
+    public static function request(string $url, int $productId): void
     {
         self::create([
             'url' => $url,
@@ -30,23 +30,20 @@ class Domain extends Model
         ]);
     }
 
-    public function activate() : void
+    public function activate(): void
     {
         $this->status = 'registered';
-    }
-
-    public function isActivated(): bool
-    {
-        return $this->status === self::ACTIVATED_STATUS;
-    }
-
-    public function isNotActivated(): bool
-    {
-        return $this->status === self::NOT_ACTIVATED_STATUS;
     }
 
     public function setCode(string $code)
     {
         $this->code = $code;
+    }
+
+    public function scopeIsActivated($query, string $domain)
+    {
+        return $query->where('domain', $domain)
+            ->andWhere('status', Domain::ACTIVATED_STATUS)
+            ->andWhere('product_id', self::PRO_PLUGIN_PRODUCT_ID);
     }
 }
