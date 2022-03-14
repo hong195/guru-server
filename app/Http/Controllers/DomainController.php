@@ -23,8 +23,9 @@ class DomainController extends Controller
 
         }catch (NotPurchasedProductException $e) {
             return view('errors.activation', [
-                'description' => '<a href='. $wpAdminUrl .'>Go back to my amdin panel</a>',
-                'title' => 'Activation error, please try later'
+                'title' => 'Activation error, you did not purchase plugin',
+                'description' => '<a href="https://codecanyon.net/item/bot-for-telegram-on-woocommerce-pro/31778602">
+                            Purchase plugin</a>',
             ]);
         }
     }

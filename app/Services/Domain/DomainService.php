@@ -3,6 +3,7 @@
 namespace App\Services\Domain;
 
 use App\DTO\DomainDTO;
+use App\Events\EnvatoUserAuthorized;
 use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
 use App\Models\Domain;
@@ -19,7 +20,7 @@ class DomainService
      */
     public function __construct(private OAuthInterface $oAuth)
     {
-        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['token' => $this->oAuth->getAccessToken()]);
+        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $this->oAuth->getAccessToken()]);
     }
 
     /**
@@ -29,6 +30,8 @@ class DomainService
      */
     public function activate(DomainDTO $dto)
     {
+        EnvatoUserAuthorized::dispatch($this->oAuth->getUser());
+
         if (Domain::isActivated($dto->getUrl())->exists()) {
             throw new DomainHasBeenAlreadyActivated();
         }

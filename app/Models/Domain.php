@@ -42,8 +42,8 @@ class Domain extends Model
 
     public function scopeIsActivated($query, string $domain)
     {
-        return $query->where('domain', $domain)
-            ->andWhere('status', Domain::ACTIVATED_STATUS)
-            ->andWhere('product_id', self::PRO_PLUGIN_PRODUCT_ID);
+        return $query->where('url', $domain)
+            ->where('status', Domain::ACTIVATED_STATUS)
+            ->where('product_id', self::PRO_PLUGIN_PRODUCT_ID);
     }
 }

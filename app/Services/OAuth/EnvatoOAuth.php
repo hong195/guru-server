@@ -10,7 +10,6 @@ class EnvatoOAuth extends BaseOuath
     public function __construct(Provider $provider)
     {
         parent::__construct($provider);
-        EnvatoUserAuthorized::dispatch($this->getUser());
     }
 
     public function redirect(): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
