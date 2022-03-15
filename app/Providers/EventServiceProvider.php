@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\DomainActivated;
 use App\Events\EnvatoUserAuthorized;
 use App\Listeners\SyncEnvatoUser;
+use App\Listeners\UpdateDomainWordpressSite;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -26,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         EnvatoUserAuthorized::class => [
             SyncEnvatoUser::class
+        ],
+        DomainActivated::class => [
+            UpdateDomainWordpressSite::class
         ]
     ];
 

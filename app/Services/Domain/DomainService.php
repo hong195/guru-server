@@ -3,13 +3,13 @@
 namespace App\Services\Domain;
 
 use App\DTO\DomainDTO;
-use App\Events\EnvatoUserAuthorized;
+use App\Events\DomainActivated;
 use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
 use App\Models\Domain;
 use App\Services\Envato\EnvatoBuyerAPI;
-use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 
 class DomainService
 {
@@ -18,9 +18,9 @@ class DomainService
     /**
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function __construct(private OAuthInterface $oAuth)
+    public function __construct(private string $accessToken)
     {
-        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $this->oAuth->getAccessToken()]);
+        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $accessToken]);
     }
 
     /**
@@ -30,10 +30,10 @@ class DomainService
      */
     public function activate(DomainDTO $dto)
     {
-        EnvatoUserAuthorized::dispatch($this->oAuth->getUser());
+        $activatedDomain = Domain::isActivated($dto->getUserNickname())->first();
 
-        if (Domain::isActivated($dto->getUrl())->exists()) {
-            throw new DomainHasBeenAlreadyActivated();
+        if ($activatedDomain) {
+            throw new DomainHasBeenAlreadyActivated(domainUrl: $this->cleanUrl($activatedDomain->url));
         }
 
         if (!$this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {
@@ -41,24 +41,31 @@ class DomainService
         }
 
         /** @var Domain $domain */
-        $domain = Domain::create([
-            'url' => $dto->getUrl(),
-            'product_id' => $dto->getProductID(),
-            'status' => 'unactivated',
+        $domain = Domain::firstOrNew([
+            'url' => $this->cleanUrl($dto->getUrl()),
+            'product_id' => Domain::PRO_PLUGIN_PRODUCT_ID,
+            'user_nickname' => $dto->getUserNickname()
         ]);
 
         $domain->activate();
         $domain->setCode($this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID));
         $domain->save();
+
+        DomainActivated::dispatch($domain);
     }
 
     /**
      * @throws ModelNotFoundException
      */
-    public function deActivate(DomainDTO $dto)
+    public function deActivate(string $domainUrl)
     {
-        $domain = Domain::isActivated($dto->getUrl())->firstOrFail();
+        /** @var Domain $domain */
+        $domain = Domain::where('url', $domainUrl)->firstOrFail();
+        $domain->deactivate();
+    }
 
-        $domain->remove();
+    private function cleanUrl(string $url): string
+    {
+        return Str::replace(['http://', 'https://'], '', $url);
     }
 }

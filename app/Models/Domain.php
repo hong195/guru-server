@@ -32,7 +32,12 @@ class Domain extends Model
 
     public function activate(): void
     {
-        $this->status = 'registered';
+        $this->status = self::ACTIVATED_STATUS;
+    }
+
+    public function deActivate(): void
+    {
+        $this->status = self::NOT_ACTIVATED_STATUS;
     }
 
     public function setCode(string $code)
@@ -40,9 +45,9 @@ class Domain extends Model
         $this->code = $code;
     }
 
-    public function scopeIsActivated($query, string $domain)
+    public function scopeIsActivated($query, string $userNickname)
     {
-        return $query->where('url', $domain)
+        return $query->where('user_nickname', $userNickname)
             ->where('status', Domain::ACTIVATED_STATUS)
             ->where('product_id', self::PRO_PLUGIN_PRODUCT_ID);
     }

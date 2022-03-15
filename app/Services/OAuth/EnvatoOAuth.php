@@ -16,7 +16,7 @@ class EnvatoOAuth extends BaseOuath
     {
         return $this->getSocialDriver()
             ->with([
-                'state' => request('domain')
+                'state' => request('domain'),
             ])
             ->redirect();
     }

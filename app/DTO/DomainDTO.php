@@ -2,12 +2,48 @@
 
 namespace App\DTO;
 
+use App\Models\Domain;
+
 class DomainDTO
 {
+    private string $productID;
+
     public function __construct(
         private string $url,
-        private string $productID,
-    ){}
+        private mixed  $userNickname,
+        private string $status = '',
+        private string $code = '',
+    )
+    {
+    }
+
+    public static function fromArray(array $array)
+    {
+        return new self(...$array);
+    }
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserNickname(): string
+    {
+        return $this->userNickname;
+    }
 
     /**
      * @return string
@@ -22,6 +58,6 @@ class DomainDTO
      */
     public function getProductID(): string
     {
-        return $this->productID;
+        return Domain::PRO_PLUGIN_PRODUCT_ID;
     }
 }

@@ -2,48 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\DomainDTO;
+use App\Events\EnvatoUserAuthorized;
+use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
 use App\Http\Requests\DomainRequest;
+use App\Http\Requests\ReActivateDomainRequest;
 use App\Services\Domain\DomainService;
+use App\Services\Envato\EnvatoBuyerAPI;
+use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DomainController extends Controller
 {
-    public function __construct(private DomainService $domainService){
+    private DomainService $domainService;
+
+    public function __construct(private OAuthInterface $oAuth)
+    {
+        $this->domainService = app()->make(DomainService::class, ['accessToken' => $oAuth->getAccessToken()]);;
     }
 
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        $wpAdminUrl = $request->getDTO()->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
+        $dto = DomainDTO::fromArray([
+            $request->validated('state'),
+            $this->oAuth->getUser()->nickname,
+        ]);
+
+        $wpAdminUrl = $dto->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
 
         try {
-            $this->domainService->activate($request->getDTO());
+            $this->domainService->activate($dto);
 
             return response()->redirectTo($wpAdminUrl);
 
-        }catch (NotPurchasedProductException $e) {
+        } catch (DomainHasBeenAlreadyActivated $e) {
+            return view('errors.plugin-was-already-activated', [
+                'newDomain' => $request->getDTO()->getUrl(),
+                'activatedDomain' => $e->getDomainUrl(),
+            ]);
+        } catch (NotPurchasedProductException $e) {
             return view('errors.activation', [
                 'title' => 'Activation error, you did not purchase plugin',
                 'description' => '<a href="https://codecanyon.net/item/bot-for-telegram-on-woocommerce-pro/31778602">
                             Purchase plugin</a>',
             ]);
+        } finally {
+            EnvatoUserAuthorized::dispatch($this->oAuth->getUser());
         }
     }
 
-    public function deActivate(DomainRequest $request): string
+    public function reActivate(ReActivateDomainRequest $request): string
     {
-        $goBackUrl = $request->getDTO()->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
+        $this->domainService->deActivate($request->validated('old_domain'));
 
-        try {
-            $this->domainService->deActivate($request->getDTO());
-            $title = 'Plugin was successfully disconnected from ' . $request->getDTO()->getUrl() .' domain';
-        }catch (NotPurchasedProductException $e) {
-            $title = 'Error occurred, please try later';
-        }
-
-        return view('activation-success', [
-            'description' => '<a href='. $goBackUrl .'>Go back to my amdin panel</a>',
-            'title' => $title
-        ]);
+        return response()->redirectTo(route('domain/activate', [
+            'state' => $request->validated('new_domain')
+        ]));
     }
 }
