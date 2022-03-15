@@ -39,12 +39,12 @@ class DomainController extends Controller
 
         } catch (DomainHasBeenAlreadyActivated $e) {
             return view('errors.plugin-was-already-activated', [
-                'newDomain' => $request->getDTO()->getUrl(),
+                'newDomain' => $dto->getUrl(),
                 'activatedDomain' => $e->getDomainUrl(),
             ]);
         } catch (NotPurchasedProductException $e) {
             return view('errors.activation', [
-                'title' => 'Activation error, you did not purchase plugin',
+                'title' => 'Activation error, looks like you did not purchase plugin',
                 'description' => '<a href="https://codecanyon.net/item/bot-for-telegram-on-woocommerce-pro/31778602">
                             Purchase plugin</a>',
             ]);
