@@ -9,9 +9,7 @@ use App\Exceptions\NotPurchasedProductException;
 use App\Http\Requests\DomainRequest;
 use App\Http\Requests\ReActivateDomainRequest;
 use App\Services\Domain\DomainService;
-use App\Services\Envato\EnvatoBuyerAPI;
 use App\Services\Interfaces\OAuthInterface;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DomainController extends Controller
@@ -26,11 +24,11 @@ class DomainController extends Controller
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
         $dto = DomainDTO::fromArray([
-            $request->validated('state'),
+            Str::replace(['http://', 'https://'], '', $request->validated('state')),
             $this->oAuth->getUser()->nickname,
         ]);
 
-        $wpAdminUrl = $dto->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
+        $wpAdminUrl = $request->validated('state') . '/wp-admin/admin.php?page=bftow_settings';
 
         try {
             $this->domainService->activate($dto);
@@ -38,6 +36,11 @@ class DomainController extends Controller
             return response()->redirectTo($wpAdminUrl);
 
         } catch (DomainHasBeenAlreadyActivated $e) {
+
+            if ($dto->getUrl() === $e->getDomainUrl()) {
+                return redirect()->away($wpAdminUrl);
+            }
+
             return view('errors.plugin-was-already-activated', [
                 'newDomain' => $dto->getUrl(),
                 'activatedDomain' => $e->getDomainUrl(),

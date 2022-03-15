@@ -64,7 +64,7 @@ class DomainService
         $domain->deactivate();
     }
 
-    private function cleanUrl(string $url): string
+    public function cleanUrl(string $url): string
     {
         return Str::replace(['http://', 'https://'], '', $url);
     }

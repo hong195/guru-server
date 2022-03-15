@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Support\Str;
 
 class DomainHasBeenAlreadyActivated extends Exception
 {

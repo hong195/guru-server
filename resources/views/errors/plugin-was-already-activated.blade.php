@@ -7,6 +7,7 @@
             font-weight: 600;
             line-height: 100px;
         }
+
         .error_number small {
             font-size: 56px;
             font-weight: 700;
@@ -42,18 +43,22 @@
 @section('content')
     <div class="row">
         <div class="col-md-12 text-center">
-            <div class="error_number">
-                <h2 style="font-weight: 500;">
-                    This plugin licence is used on the
-                    <i style="font-weight: bold;">{{ $activatedDomain }}</i> domain. <br>
-                    Do you want to deactivate
-                    <i style="font-weight: bold;">{{ $activatedDomain }}</i> and activate plugin on
-                    <i style="font-weight: bold;">{{ $newDomain }}</i>?
-                </h2>
-            </div>
-            <div class="error_description text-muted">
-                <button><a href="{{ route('') }}">Yes I do!</a></button>
-            </div>
+                <div class="error_number">
+                    <h2 style="font-weight: 500;">
+                        This plugin licence is used on the
+                        <i style="font-weight: bold;">{{ $activatedDomain }}</i> domain. <br>
+                        Do you want to deactivate
+                        <i style="font-weight: bold;">{{ $activatedDomain }}</i> and activate plugin on
+                        <i style="font-weight: bold;">{{ $newDomain }}</i>?
+                    </h2>
+                </div>
+                <div class="error_description text-muted">
+                    <button><a href="{{ route('domain/re-activate', [
+                                    'old_domain' => $activatedDomain,
+                                    'new_domain' => $newDomain])
+                                    }}">
+                            Yes I do!</a></button>
+                </div>
         </div>
     </div>
 @endsection
