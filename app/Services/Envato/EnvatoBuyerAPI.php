@@ -2,7 +2,6 @@
 
 namespace App\Services\Envato;
 
-use App\Models\Domain;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;

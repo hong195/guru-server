@@ -15,10 +15,16 @@ use Illuminate\Support\Str;
 class DomainController extends Controller
 {
     private DomainService $domainService;
+    private OAuthInterface $oAuth;
 
-    public function __construct(private OAuthInterface $oAuth)
+    public function __construct()
     {
-        $this->domainService = app()->make(DomainService::class, ['accessToken' => $oAuth->getAccessToken()]);;
+        try {
+            $this->oAuth = app()->make(OAuthInterface::class);
+            $this->domainService = app()->make(DomainService::class, ['accessToken' => $this->oAuth->getAccessToken()]);
+        }catch (\Exception $e) {
+
+        }
     }
 
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
@@ -63,5 +69,14 @@ class DomainController extends Controller
         return response()->redirectTo(route('domain/activate', [
             'state' => $request->validated('new_domain')
         ]));
+    }
+
+    public function verify(string $domainUrl)
+    {
+        $url = Str::replace(['http://', 'https://'], '', $domainUrl);
+
+        return response()->json([
+            'verified' => $this->domainService->verify($url),
+        ]);
     }
 }

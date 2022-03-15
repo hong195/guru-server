@@ -64,6 +64,11 @@ class DomainService
         $domain->deactivate();
     }
 
+    public function verify(string $domainUrl)
+    {
+        return Domain::where('url', $domainUrl)->where('status', Domain::ACTIVATED_STATUS)->exists();
+    }
+
     public function cleanUrl(string $url): string
     {
         return Str::replace(['http://', 'https://'], '', $url);

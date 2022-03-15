@@ -21,10 +21,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OAuthInterface::class, function() {
             return new EnvatoOAuth(Socialite::driver('envato')->stateless());
         });
-
-        $this->app->bind(PluginActivationInterface::class, function() {
-            return new EnvatoPluginActivation();
-        });
     }
 
     /**
