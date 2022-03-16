@@ -26,5 +26,5 @@ Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/re
 Route::prefix('domain')->middleware('throttle:30,1')->group(function() {
     Route::get('activate', [DomainController::class, 'activate'])->name('domain/activate');
     Route::get('re-activate', [DomainController::class, 're-activate'])->name('domain/re-activate');
-    Route::get('verify', [DomainController::class, 'verify'])->name('domain/verify');
+    Route::post('verify', [DomainController::class, 'verify'])->name('domain/verify');
 });
