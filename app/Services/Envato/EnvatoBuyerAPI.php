@@ -30,7 +30,7 @@ class EnvatoBuyerAPI
                     ->json(),
                 'results', []);
 
-        $this->items = collect($listOfPurchases);
+        $this->items = collect($listOfPurchases)->reverse();
 
         return $this->items;
     }

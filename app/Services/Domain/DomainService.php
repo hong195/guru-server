@@ -9,6 +9,7 @@ use App\Exceptions\NotPurchasedProductException;
 use App\Models\Domain;
 use App\Services\Envato\EnvatoBuyerAPI;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class DomainService
@@ -40,8 +41,9 @@ class DomainService
             'user_nickname' => $dto->getUserNickname()
         ]);
 
+        $purchasedProduct = $envatoBuyerAPI->getBuyerPurchaseByProductId(Domain::PRO_PLUGIN_PRODUCT_ID)->first();
         $domain->activate();
-        $domain->setCode($envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID));
+        $domain->setCode(Arr::get($purchasedProduct, 'code'));
         $domain->save();
 
         DomainActivated::dispatch($domain);
