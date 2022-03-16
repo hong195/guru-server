@@ -10,6 +10,7 @@ use App\Http\Requests\DomainRequest;
 use App\Http\Requests\ReActivateDomainRequest;
 use App\Services\Domain\DomainService;
 use App\Services\Interfaces\OAuthInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DomainController extends Controller
@@ -71,9 +72,9 @@ class DomainController extends Controller
         ]));
     }
 
-    public function verify(string $domainUrl)
+    public function verify(Request $request): \Illuminate\Http\JsonResponse
     {
-        $url = Str::replace(['http://', 'https://'], '', $domainUrl);
+        $url = Str::replace(['http://', 'https://'], '', $request->get('domain'));
 
         return response()->json([
             'verified' => $this->domainService->verify($url),
