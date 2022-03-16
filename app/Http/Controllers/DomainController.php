@@ -15,17 +15,8 @@ use Illuminate\Support\Str;
 
 class DomainController extends Controller
 {
-    private DomainService $domainService;
-    private OAuthInterface $oAuth;
-
-    public function __construct()
+    public function __construct(private OAuthInterface $oAuth, private DomainService $domainService )
     {
-        try {
-            $this->oAuth = app()->make(OAuthInterface::class);
-            $this->domainService = app()->make(DomainService::class, ['accessToken' => $this->oAuth->getAccessToken()]);
-        }catch (\Exception $e) {
-
-        }
     }
 
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
@@ -38,7 +29,7 @@ class DomainController extends Controller
         $wpAdminUrl = $request->validated('state') . '/wp-admin/admin.php?page=bftow_settings';
 
         try {
-            $this->domainService->activate($dto);
+            $this->domainService->activate($dto, $this->oAuth->getAccessToken());
 
             return response()->redirectTo($wpAdminUrl);
 

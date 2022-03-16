@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class DomainHasBeenAlreadyActivated extends Exception
 {
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, private string $domainUrl)
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, private string $domainUrl = '')
     {
         parent::__construct($message, $code, $previous);
     }

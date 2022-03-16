@@ -13,30 +13,23 @@ use Illuminate\Support\Str;
 
 class DomainService
 {
-    private EnvatoBuyerAPI $envatoBuyerAPI;
-
-    /**
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function __construct(private string $accessToken)
-    {
-        $this->envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $accessToken]);
-    }
-
     /**
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
      * @throws DomainHasBeenAlreadyActivated
      */
-    public function activate(DomainDTO $dto)
+    public function activate(DomainDTO $dto, string $accessToken)
     {
+        /** @var EnvatoBuyerAPI $domain */
+        $envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $accessToken]);
+
         $activatedDomain = Domain::isActivated($dto->getUserNickname())->first();
 
         if ($activatedDomain) {
             throw new DomainHasBeenAlreadyActivated(domainUrl: $this->cleanUrl($activatedDomain->url));
         }
 
-        if (!$this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {
+        if (!$envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {
             throw new NotPurchasedProductException();
         }
 
@@ -48,7 +41,7 @@ class DomainService
         ]);
 
         $domain->activate();
-        $domain->setCode($this->envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID));
+        $domain->setCode($envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID));
         $domain->save();
 
         DomainActivated::dispatch($domain);
