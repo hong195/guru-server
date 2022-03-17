@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\DomainDeactivated;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class UpdateDomainWordpressSite
@@ -24,6 +25,10 @@ class UpdateDomainWordpressSite
     {
         $domainUrl = $event->deactivatedDomainUrl;
 
-        Http::post("//$domainUrl");
+        try {
+            Http::post("//$domainUrl/wp-json/license/v1/de-activate");
+        }catch (ConnectionException $e) {
+            //we dont care what result is it
+        }
     }
 }
