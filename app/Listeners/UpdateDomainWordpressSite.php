@@ -2,9 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\DomainActivated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Events\DomainDeactivated;
+use Illuminate\Support\Facades\Http;
 
 class UpdateDomainWordpressSite
 {
@@ -13,10 +12,7 @@ class UpdateDomainWordpressSite
      *
      * @return void
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(){}
 
     /**
      * Handle the event.
@@ -24,8 +20,10 @@ class UpdateDomainWordpressSite
      * @param  object  $event
      * @return void
      */
-    public function handle(DomainActivated $event)
+    public function handle(DomainDeactivated $event)
     {
-        //to do perform request to wordpress site to set
+        $domainUrl = $event->deactivatedDomainUrl;
+
+        Http::post("//$domainUrl");
     }
 }

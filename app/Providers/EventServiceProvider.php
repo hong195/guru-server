@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\DomainActivated;
+use App\Events\DomainDeactivated;
 use App\Events\EnvatoUserAuthorized;
 use App\Listeners\SyncEnvatoUser;
 use App\Listeners\UpdateDomainWordpressSite;
@@ -28,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
         EnvatoUserAuthorized::class => [
             SyncEnvatoUser::class
         ],
-        DomainActivated::class => [
+        DomainDeactivated::class => [
             UpdateDomainWordpressSite::class
         ]
     ];

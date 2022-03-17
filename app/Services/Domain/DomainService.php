@@ -4,6 +4,7 @@ namespace App\Services\Domain;
 
 use App\DTO\DomainDTO;
 use App\Events\DomainActivated;
+use App\Events\DomainDeactivated;
 use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
 use App\Models\Domain;
@@ -57,6 +58,8 @@ class DomainService
         /** @var Domain $domain */
         $domain = Domain::where('url', $domainUrl)->firstOrFail();
         $domain->deactivate();
+
+        DomainDeactivated::dispatch($domainUrl);
     }
 
     public function verify(string $domainUrl)
