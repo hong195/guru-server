@@ -58,8 +58,8 @@ class DomainController extends Controller
     {
         $this->domainService->deActivate($request->validated('old_domain'));
 
-        return response()->redirectTo(route('domain/activate', [
-            'state' => $request->validated('new_domain')
+        return response()->redirectTo(route('auth/redirect', [
+            'domain' => $request->validated('new_domain')
         ]));
     }
 

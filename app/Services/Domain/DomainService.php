@@ -58,6 +58,7 @@ class DomainService
         /** @var Domain $domain */
         $domain = Domain::where('url', $domainUrl)->firstOrFail();
         $domain->deactivate();
+        $domain->save();
 
         DomainDeactivated::dispatch($domainUrl);
     }
