@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('purchases', function (Blueprint $table) {
             $table->string('support_amount')->after('license')->nullable();
+            $table->string('supported_until')->after('license')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('purchases', function (Blueprint $table) {
             $table->dropColumn('support_amount');
+            $table->dropColumn('supported_until');
         });
     }
 };
