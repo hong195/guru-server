@@ -12,6 +12,10 @@ class Purchase extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'item' => 'array',
+    ];
+
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);

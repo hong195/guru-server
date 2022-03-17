@@ -45,10 +45,15 @@ class SyncEnvatoUser
         $user->password = bcrypt(123);
         $user->save();
 
-        $ids = Purchase::where('user_id', $user->id)->all()->map->id;
-        Purchase::destroy($ids->toArray());
+        $ids = Purchase::where('user_id', $user->id)->get()->map->id;
+
+        if ($ids) {
+            Purchase::destroy($ids->toArray());
+        }
 
         $purchases = $buyerAPI->getBuyerPurchases()->map(function($purchase) {
+
+            dd($purchase);
             return new Purchase($purchase);
         });
 
