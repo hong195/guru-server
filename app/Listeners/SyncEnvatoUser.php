@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\EnvatoUserAuthorized;
 use App\Models\User;
+use App\Services\Envato\EnvatoBuyerAPI;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -14,7 +15,9 @@ class SyncEnvatoUser
      *
      * @return void
      */
-    public function __construct(){}
+    public function __construct(){
+
+    }
 
     /**
      * Handle the event.
@@ -25,6 +28,8 @@ class SyncEnvatoUser
     public function handle(EnvatoUserAuthorized $event)
     {
         $oAuthUser = $event->user;
+        /** @var EnvatoBuyerAPI $buyerAPI */
+        $buyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $oAuthUser->token]);
 
         $user = User::firstOrNew([
             'nickname' => $oAuthUser->nickname,
@@ -38,5 +43,7 @@ class SyncEnvatoUser
 
         $user->password = bcrypt(123);
         $user->save();
+
+        $user->purchases()->saveMany($buyerAPI->getBuyerPurchases()->toArray());
     }
 }

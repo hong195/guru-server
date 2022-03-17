@@ -21,7 +21,7 @@ class DomainService
      */
     public function activate(DomainDTO $dto, string $accessToken)
     {
-        /** @var EnvatoBuyerAPI $domain */
+        /** @var EnvatoBuyerAPI $envatoBuyerAPI */
         $envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $accessToken]);
 
         $activatedDomain = Domain::isActivated($dto->getUserNickname())->first();
