@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function purchases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Purchases::class);
+        return $this->hasMany(Purchase::class);
     }
 }
