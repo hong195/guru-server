@@ -52,8 +52,6 @@ class SyncEnvatoUser
         }
 
         $purchases = $buyerAPI->getBuyerPurchases()->map(function($purchase) {
-
-            dd($purchase);
             return new Purchase($purchase);
         });
 
