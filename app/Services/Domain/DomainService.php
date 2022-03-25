@@ -28,7 +28,7 @@ class DomainService
         $activatedDomain = Domain::isActivated($dto->getUserNickname())->first();
 
         if ($activatedDomain) {
-            throw new DomainHasBeenAlreadyActivated(domainUrl: $this->cleanUrl($activatedDomain->url));
+            throw new DomainHasBeenAlreadyActivated(domainUrl: $activatedDomain->url);
         }
 
         if (!$envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {

@@ -11,6 +11,7 @@ use App\Http\Requests\ReActivateDomainRequest;
 use App\Services\Domain\DomainService;
 use App\Services\Interfaces\OAuthInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
 class DomainController extends Controller
@@ -36,7 +37,7 @@ class DomainController extends Controller
         } catch (DomainHasBeenAlreadyActivated $e) {
 
             if ($dto->getUrl() === $e->getDomainUrl()) {
-                return redirect()->away($wpAdminUrl);
+                return Redirect::away($wpAdminUrl);
             }
 
             return view('errors.plugin-was-already-activated', [
