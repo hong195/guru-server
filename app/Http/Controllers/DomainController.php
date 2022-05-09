@@ -22,17 +22,21 @@ class DomainController extends Controller
 
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        $dto = DomainDTO::fromArray([
-            Str::replace(['http://', 'https://'], '', $request->validated('state')),
-            $this->oAuth->getUser()->nickname,
-        ]);
+        try {
+            $dto = DomainDTO::fromArray([
+                $request->validated('state'),
+                $this->oAuth->getUser()->nickname,
+            ]);
+        }catch (\Exception $e) {
+            return 1;
+        }
 
-        $wpAdminUrl = $request->validated('state') . '/wp-admin/admin.php?page=bftow_settings';
+        $wpAdminUrl = $dto->getFullUrl() . '/wp-admin/admin.php?page=bftow_settings';
 
         try {
             $this->domainService->activate($dto, $this->oAuth->getAccessToken());
 
-            return response()->redirectTo($wpAdminUrl);
+            return Redirect::away("$wpAdminUrl");
 
         } catch (DomainHasBeenAlreadyActivated $e) {
 
@@ -59,9 +63,9 @@ class DomainController extends Controller
     {
         $this->domainService->deActivate($request->validated('old_domain'));
 
-        return response()->redirectTo(route('auth/redirect', [
+        return Redirect::route('auth/redirect', [
             'domain' => $request->validated('new_domain')
-        ]));
+        ]);
     }
 
     public function verify(Request $request): \Illuminate\Http\JsonResponse

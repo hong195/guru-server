@@ -3,9 +3,12 @@
 namespace App\DTO;
 
 use App\Models\Domain;
+use JetBrains\PhpStorm\Pure;
 
 class DomainDTO
 {
+    private string $scheme;
+
     private string $productID;
 
     public function __construct(
@@ -15,6 +18,7 @@ class DomainDTO
         private string $code = '',
     )
     {
+        $this->scheme = array_key_exists('scheme', parse_url($this->url)) ? parse_url($this->url)['scheme'] : 'http';
     }
 
     public static function fromArray(array $array)
@@ -59,5 +63,18 @@ class DomainDTO
     public function getProductID(): string
     {
         return Domain::PRO_PLUGIN_PRODUCT_ID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScheme(): string
+    {
+        return $this->scheme;
+    }
+
+    #[Pure] public function getFullUrl(): string
+    {
+        return "{$this->getScheme()}://{$this->getUrl()}";
     }
 }
