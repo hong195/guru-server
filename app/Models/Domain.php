@@ -13,7 +13,7 @@ class Domain extends Model
     const ACTIVATED_STATUS = 'activated';
     const NOT_ACTIVATED_STATUS = 'unactivated';
     ##const NOT_ACTIVATED_STATUS = 'unactivated';
-    const PRO_PLUGIN_PRODUCT_ID = 9221747;
+    const PRO_PLUGIN_PRODUCT_ID = 31778602;
 
     protected $guarded = [];
 
