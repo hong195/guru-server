@@ -32,15 +32,17 @@ class SyncEnvatoUser
         /** @var EnvatoBuyerAPI $buyerAPI */
         $buyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $oAuthUser->token]);
 
-        $user = User::firstOrNew([
-            'nickname' => $oAuthUser->nickname,
-        ])
-            ->fill([
+        try {
+            $user = User::where('nickName', $oAuthUser->nickname)->firstOrFail();
+        }catch (\Exception $e) {
+            $user = User::create([
+                'nickname' => $oAuthUser->nickname,
                 'name' => $oAuthUser->name,
                 'email' => $oAuthUser->email,
                 'access_token' => $oAuthUser->token,
                 'refresh_token' => $oAuthUser->refreshToken,
             ]);
+        }
 
         $user->password = bcrypt(123);
         $user->save();

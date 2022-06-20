@@ -22,14 +22,10 @@ class DomainController extends Controller
 
     public function activate(DomainRequest $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        try {
-            $dto = DomainDTO::fromArray([
-                $request->validated('state'),
-                $this->oAuth->getUser()->nickname,
-            ]);
-        }catch (\Exception $e) {
-            return 1;
-        }
+        $dto = DomainDTO::fromArray([
+            $request->validated('state'),
+            $this->oAuth->getUser()->nickname,
+        ]);
 
         $wpAdminUrl = $dto->getFullUrl() . '/wp-admin/admin.php?page=bftow_settings';
 
