@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Activation\EnvatoPluginActivation;
 use App\Services\Interfaces\OAuthInterface;
-use App\Services\Interfaces\PluginActivationInterface;
 use App\Services\OAuth\EnvatoOAuth;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Facades\Socialite;
