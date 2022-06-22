@@ -27,7 +27,7 @@ class DomainController extends Controller
             $this->oAuth->getUser()->nickname,
         ]);
 
-        $wpAdminUrl = $dto->getFullUrl() . '/wp-admin/admin.php?page=bftow_settings';
+        $wpAdminUrl = $dto->getUrl() . '/wp-admin/admin.php?page=bftow_settings';
 
         try {
             $this->domainService->activate($dto, $this->oAuth->getAccessToken());
@@ -36,7 +36,7 @@ class DomainController extends Controller
 
         } catch (DomainHasBeenAlreadyActivated $e) {
 
-            if ($dto->getUrl() === $e->getDomainUrl()) {
+            if ($dto->getUrl() === $e->getDomainUrl() || str_contains($dto->getUrl(), $e->getDomainUrl())) {
                 return Redirect::away($wpAdminUrl);
             }
 
@@ -66,10 +66,17 @@ class DomainController extends Controller
 
     public function verify(Request $request): \Illuminate\Http\JsonResponse
     {
-        $url = Str::replace(['http://', 'https://'], '', $request->get('domain'));
+        try {
+            $url = parse_url($request->get('domain'));
+            $url = $url['host'];
+
+            $verified = $this->domainService->verify($url);
+        }catch (\Exception $e) {
+            $verified = false;
+        }
 
         return response()->json([
-            'verified' => $this->domainService->verify($url),
+            'verified' => $verified,
         ]);
     }
 }

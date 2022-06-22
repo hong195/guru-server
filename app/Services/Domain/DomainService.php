@@ -65,7 +65,7 @@ class DomainService
 
     public function verify(string $domainUrl)
     {
-        return Domain::where('url', $domainUrl)->where('status', Domain::ACTIVATED_STATUS)->exists();
+        return Domain::where('url', 'like',"$domainUrl%")->where('status', Domain::ACTIVATED_STATUS)->exists();
     }
 
     public function cleanUrl(string $url): string
