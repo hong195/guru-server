@@ -2,89 +2,74 @@
 
 namespace App\Services\Domain;
 
-use App\Exceptions\DomainIsAlreadyRequested;
+use App\DTO\DomainDTO;
+use App\Events\DomainActivated;
+use App\Events\DomainDeactivated;
+use App\Exceptions\DomainHasBeenAlreadyActivated;
 use App\Exceptions\NotPurchasedProductException;
-use App\Http\Requests\DomainRequest;
 use App\Models\Domain;
-use App\Models\User;
-use App\Services\Envato\EnvatoMarketAPI;
-use App\Services\Interfaces\OAuthInterface;
+use App\Services\Envato\EnvatoBuyerAPI;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class DomainService
 {
-    public function __construct(private EnvatoMarketAPI $marketAPI, private OAuthInterface $OAuth)
-    {
-    }
-
-    /**
-     * @throws DomainIsAlreadyRequested
-     */
-    public function request(DomainRequest $request)
-    {
-        $dto = $request->getDTO();
-        /** @var Domain $domain */
-        $domainIsAlreadyRequested = Domain::where('url', $dto->getUrl())->first();
-
-        if ($domainIsAlreadyRequested) {
-            throw new DomainIsAlreadyRequested();
-        }
-
-        Domain::request($dto->getUrl(), $dto->getProductID());
-
-        return $this->OAuth->redirect();
-    }
-
     /**
      * @throws ModelNotFoundException
      * @throws NotPurchasedProductException
+     * @throws DomainHasBeenAlreadyActivated
      */
-    public function register(DomainRequest $request)
+    public function activate(DomainDTO $dto, string $accessToken)
     {
-        $dto = $request->getDTO();
+        /** @var EnvatoBuyerAPI $envatoBuyerAPI */
+        $envatoBuyerAPI = app()->make(EnvatoBuyerAPI::class, ['accessToken' => $accessToken]);
 
-        /** @var Domain $domain */
-        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
+        $activatedDomain = Domain::isActivated($dto->getUserNickname())->first();
 
-        $user = $this->OAuth->getUser();
-
-        //todo perform user insertion on event
-        User::firstOrCreate([
-            'name' => $user->name,
-        ])
-            ->fill([
-                'nickname' => $user->nickname,
-                'access_token' => $user->token,
-                'refresh_token' => $user->refreshToken,
-                'password' => bcrypt(123)
-            ])
-            ->save();
-
-        $hasPurchasedProduct = $this->marketAPI->getBuyerPurchases($user->token)
-            ->filter(function ($purchase) use ($domain) {
-                return $purchase['item']['id'] === Domain::PRODUCT_ID;
-            })
-            ->first();
-
-        if (!$hasPurchasedProduct) {
-            throw new NotPurchasedProductException;
+        if ($activatedDomain) {
+            throw new DomainHasBeenAlreadyActivated(domainUrl: $activatedDomain->url);
         }
 
-        $domain->setCode($hasPurchasedProduct['code']);
-        $domain->register();
+        if (!$envatoBuyerAPI->hasBuyerPurchasedProduct(Domain::PRO_PLUGIN_PRODUCT_ID)) {
+            throw new NotPurchasedProductException();
+        }
+
+        /** @var Domain $domain */
+        $domain = Domain::firstOrNew([
+            'url' => $this->cleanUrl($dto->getUrl()),
+            'product_id' => Domain::PRO_PLUGIN_PRODUCT_ID,
+            'user_nickname' => $dto->getUserNickname()
+        ]);
+
+        $purchasedProduct = $envatoBuyerAPI->getBuyerPurchaseByProductId(Domain::PRO_PLUGIN_PRODUCT_ID)->first();
+        $domain->activate();
+        $domain->setCode(Arr::get($purchasedProduct, 'code'));
         $domain->save();
-        ///fire events after completion
+
+        DomainActivated::dispatch($domain);
     }
 
     /**
      * @throws ModelNotFoundException
      */
-    public function deRegister(DomainRequest $request)
+    public function deActivate(string $domainUrl)
     {
-        $dto = $request->getDTO();
+        /** @var Domain $domain */
+        $domain = Domain::where('url', $domainUrl)->firstOrFail();
+        $domain->deactivate();
+        $domain->save();
 
-        $domain = Domain::where('url', $dto->getUrl())->firstOrFail();
+        DomainDeactivated::dispatch($domainUrl);
+    }
 
-        $domain->remove();
+    public function verify(string $domainUrl)
+    {
+        return Domain::where('url', 'like',"$domainUrl%")->where('status', Domain::ACTIVATED_STATUS)->exists();
+    }
+
+    public function cleanUrl(string $url): string
+    {
+        return Str::replace(['http://', 'https://'], '', $url);
     }
 }

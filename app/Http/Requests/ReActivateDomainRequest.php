@@ -2,20 +2,17 @@
 
 namespace App\Http\Requests;
 
-use App\DTO\DomainDTO;
-use App\Models\Domain;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 
-class DomainRequest extends FormRequest
+class ReActivateDomainRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -25,11 +22,11 @@ class DomainRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['state' => "string[]"])] public function rules(): array
+    #[ArrayShape(['old_domain' => "string[]", 'new_domain' => "string[]"])] public function rules(): array
     {
         return [
-            'state' => ['required', 'url'],
-            //'productID' => ['required', 'exists:App\Models\Product,id'],
+            'old_domain' => ['required', 'string'],
+            'new_domain' => ['required', 'string'],
         ];
     }
 }

@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\DomainActivated;
+use App\Events\DomainDeactivated;
+use App\Events\EnvatoUserAuthorized;
+use App\Listeners\SyncEnvatoUser;
+use App\Listeners\UpdateDomainWordpressSite;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,6 +26,12 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             \SocialiteProviders\Envato\EnvatoExtendSocialite::class.'@handle',
         ],
+        EnvatoUserAuthorized::class => [
+            SyncEnvatoUser::class
+        ],
+        DomainDeactivated::class => [
+            UpdateDomainWordpressSite::class
+        ]
     ];
 
     /**

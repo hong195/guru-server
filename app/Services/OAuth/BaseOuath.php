@@ -29,7 +29,7 @@ abstract class BaseOuath implements OAuthInterface
         return $this->socialiteDriver;
     }
 
-    public function redirect(): \Symfony\Component\HttpFoundation\RedirectResponse|\Illuminate\Http\RedirectResponse
+    public function redirect()
     {
         return $this->getSocialDriver()->redirect();
     }
