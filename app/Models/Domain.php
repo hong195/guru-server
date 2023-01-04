@@ -16,11 +16,6 @@ class Domain extends Model
 
     protected $guarded = [];
 
-    public function product(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->HasOne(Product::class);
-    }
-
     public static function request(string $url, int $productId): void
     {
         self::create([
