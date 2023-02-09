@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\DomainRequest;
+use App\Models\Domain;
+use App\Models\Product;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -13,7 +14,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
  */
 class DomainCrudController extends CrudController
 {
-    #use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
 
@@ -38,17 +39,11 @@ class DomainCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::column('id');
-        #CRUD::column('product_id');
         CRUD::column('url');
         CRUD::column('status');
         CRUD::column('code');
         CRUD::column('created_at');
         CRUD::column('updated_at');
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
-         */
     }
 
     /**
@@ -59,21 +54,49 @@ class DomainCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(DomainRequest::class);
+        Crud::setValidation([
+            'product_id' => 'required',
+            'url' => 'required|unique:domains,url',
+            'status' => 'required',
+            'user_nickname' => 'required',
+        ]);
 
-        CRUD::field('id');
-        CRUD::field('product_id');
-        CRUD::field('url');
-        CRUD::field('status');
-        CRUD::field('code');
-        CRUD::field('created_at');
-        CRUD::field('updated_at');
+        CRUD::addField([
+            'name'        => 'product_id',
+            'label'       => "Plugin",
+            'type'        => 'select_from_array',
+            'options'     => [Domain::PRO_PLUGIN_PRODUCT_ID => 'Telegram Pro Plugin'],
+            'allows_null' => false,
+            'default'     => 'one',
+        ]);
 
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number']));
-         */
+        CRUD::field('url')->attributes(['required' => 'required']);
+        CRUD::field('user_nickname')->attributes(['required' => 'required']);
+
+        CRUD::addField([
+            'name' => "status",
+            'label' => "Status",
+            'type' => 'select_from_array',
+            'options' => ['activated' => 'Activated', 'unactivated' => 'Unactivated'],
+            'allows_null' => false,
+            'default' => 'unactivated',
+            'required' => 'required'
+        ]);
+
+        CRUD::addField([
+            'name' => 'fake-code',
+            'label'=> 'Code',
+            'default'=> 'fake-code (manually activated)',
+            'attributes' => [
+                'disabled' => 'disabled',
+            ]
+        ]);
+
+        CRUD::addField([
+            'name' => 'code',
+            'value'=> 'fake-code (manually activated)',
+            'type' => 'hidden',
+        ]);
     }
 
     /**

@@ -24,11 +24,7 @@ Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('auth/re
 
 
 Route::prefix('domain')->middleware('throttle:30,1')->group(function() {
-    Route::get('request', [DomainController::class, 'request'])->name('domain/register');
-    Route::get('register', [DomainController::class, 'register'])->name('domain/register');
-    Route::get('deregister', [DomainController::class, 'deregister'])->name('domain/deregister');
-    Route::get('check', function () {
-        return view('welcome');
-    })
-        ->name('domain/check');
+    Route::get('activate', [DomainController::class, 'activate'])->name('domain/activate');
+    Route::get('re-activate', [DomainController::class, 'reActivate'])->name('domain/re-activate');
+    Route::post('verify', [DomainController::class, 'verify'])->name('domain/verify');
 });

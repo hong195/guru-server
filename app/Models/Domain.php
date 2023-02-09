@@ -10,18 +10,13 @@ class Domain extends Model
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
-    const REGISTERED_STATUS = 'registered';
-    const UN_REGISTERED_STATUS = 'unregistered';
-    const PRODUCT_ID = 31778602;
+    const ACTIVATED_STATUS = 'activated';
+    const NOT_ACTIVATED_STATUS = 'unactivated';
+    const PRO_PLUGIN_PRODUCT_ID = 31778602;
 
     protected $guarded = [];
 
-    public function product(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->HasOne(Product::class);
-    }
-
-    public static function request(string $url, int $productId) : void
+    public static function request(string $url, int $productId): void
     {
         self::create([
             'url' => $url,
@@ -30,23 +25,25 @@ class Domain extends Model
         ]);
     }
 
-    public function register() : void
+    public function activate(): void
     {
-        $this->status = 'registered';
+        $this->status = self::ACTIVATED_STATUS;
     }
 
-    public function isRegistered(): bool
+    public function deActivate(): void
     {
-        return $this->status === self::REGISTERED_STATUS;
-    }
-
-    public function isNotRegistered(): bool
-    {
-        return $this->status === self::UN_REGISTERED_STATUS;
+        $this->status = self::NOT_ACTIVATED_STATUS;
     }
 
     public function setCode(string $code)
     {
         $this->code = $code;
+    }
+
+    public function scopeIsActivated($query, string $userNickname)
+    {
+        return $query->where('user_nickname', $userNickname)
+            ->where('status', Domain::ACTIVATED_STATUS)
+            ->where('product_id', self::PRO_PLUGIN_PRODUCT_ID);
     }
 }

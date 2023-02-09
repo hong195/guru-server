@@ -13,7 +13,7 @@ php='/opt/php80/bin/php'
 ($php artisan down) || true
 
 # Pull the latest version of the app
-git fetch && git reset --hard origin/master
+git fetch && git reset --hard origin/dev
 
 #update .env production values
 mv .env.production .env
@@ -28,9 +28,9 @@ $php artisan clear-compiled
 $php artisan optimize
 
 # Compile npm assets
-#nvm use 12
+nvm use 12
 #
-#npm install && npm run prod
+npm install && npm run prod
 
 # Run database migrations
 $php artisan migrate --force
